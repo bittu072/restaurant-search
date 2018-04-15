@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect
 from flask import session as login_session
+from flask import jsonify, url_for, flash
 from flask import make_response
 
 from oauth2client.client import flow_from_clientsecrets
@@ -12,7 +13,39 @@ import string
 import httplib2
 import requests
 
+from sqlalchemy import create_engine, asc
+from sqlalchemy.orm import sessionmaker
+from database_setup import Base, User
+
 app = Flask(__name__)
+
+CLIENT_ID = json.loads(
+    open('client_secrets.json', 'r').read())['web']['client_id']
+
+
+# Connect to Database and create database session
+engine = create_engine('sqlite:///restaurant_data.db')
+Base.metadata.bind = engine
+
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
+
+
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session[
+                   'email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
 
 
 @app.route('/')
