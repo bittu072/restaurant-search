@@ -1,4 +1,23 @@
 from flask import Flask, render_template, request, redirect
+from flask import session as login_session
+
+import json
+import os
+import random
+import string
+
+app = Flask(__name__)
+
+
+@app.route('/')
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
+    login_session['state'] = state
+    # return "The current session state is %s" % login_session['state']
+    return render_template('login.html', STATE=state)
+
 
 
 if __name__ == '__main__':
