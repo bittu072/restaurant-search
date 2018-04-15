@@ -6,6 +6,9 @@ from flask import make_response
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 
+from sqlalchemy import create_engine, asc
+from sqlalchemy.orm import sessionmaker
+
 import json
 import os
 import random
@@ -13,9 +16,8 @@ import string
 import httplib2
 import requests
 
-from sqlalchemy import create_engine, asc
-from sqlalchemy.orm import sessionmaker
 from database_setup import Base, User
+
 
 app = Flask(__name__)
 
@@ -31,6 +33,7 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
+# creates user in the database based on the google's login info
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
@@ -40,6 +43,7 @@ def createUser(login_session):
     return user.id
 
 
+# gets the user id
 def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
@@ -196,6 +200,12 @@ def showdemo():
     # return "The current session state is %s" % login_session['state']
     return render_template('demo.html', STATE=state)
 
+
+@app.route('/yelprestsearch', methods=['GET', 'POST'])
+def yelpRestaurantSearch():
+    if request.method == 'GET':
+        return render_template('search.html')
+# else part would be for the POST, need to add
 
 
 if __name__ == '__main__':
