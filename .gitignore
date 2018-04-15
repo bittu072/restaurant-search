@@ -1,0 +1,4 @@
+*.pyc
+
+client_secrets.json
+templates/login_main.html
