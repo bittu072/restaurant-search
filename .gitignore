@@ -1,5 +1,6 @@
 *.pyc
 
 project/client_secrets.json
+project/yelp_client_secrets.json
 project/templates/login_main.html
 project/restaurant_data.db

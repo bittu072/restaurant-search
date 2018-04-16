@@ -17,6 +17,7 @@ import httplib2
 import requests
 
 from database_setup import Base, User
+import yelpapi
 
 
 app = Flask(__name__)
@@ -50,6 +51,19 @@ def getUserID(email):
         return user.id
     except:
         return None
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'email' in login_session:
+            return f(*args, **kwargs)
+        else:
+            return render_template('login0.html',
+                                   error="Login first!!!! \
+                                   You are not allowed to access it")
+    return decorated_function
+
 
 
 @app.route('/')
@@ -205,7 +219,14 @@ def showdemo():
 def yelpRestaurantSearch():
     if request.method == 'GET':
         return render_template('search.html')
-# else part would be for the POST, need to add
+    # else part would be for the POST
+    else:
+        queryInstance = yelpapi.SearchQuery()
+        location = request.form['location']
+        searchItem = request.form['searchitem']
+        results = queryInstance.main(location, searchItem)
+        return render_template('searchresults.html', results=results, location=location)
+
 
 
 if __name__ == '__main__':
