@@ -221,11 +221,23 @@ def yelpRestaurantSearch():
         return render_template('search.html')
     # else part would be for the POST
     else:
+        error_there = False
+        error=""
         queryInstance = yelpapi.SearchQuery()
-        location = request.form['location']
         searchItem = request.form['searchitem']
-        results = queryInstance.main(location, searchItem)
-        return render_template('searchresults.html', results=results, location=location)
+        if not searchItem:
+            error_there = True
+            error = error + "Please, mention seach item!! "
+        location = request.form['location']
+        if not location:
+            error_there = True
+            error = error + "Please, mention location!!"
+
+        if error_there:
+            return render_template('search.html', error=error)
+        else:
+            results = queryInstance.main(location, searchItem)
+            return render_template('searchresults.html', results=results, location=location)
 
 
 
