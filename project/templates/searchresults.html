@@ -11,7 +11,9 @@
 </h2> {% set url=res["url"] %}
 <a href="{{url}}" style="text-decoration: none">
             <i class="fa fa-yelp yelpcustom">  <b>Yelp it </b></i>
-        </a>
-<br> &#9742; {{res["phone"]}}
+</a>
+<br> &#9742; {{res["phone"]}} {% if username %}
+<br>
+<a href="/demo"> <button class="">Favorite</button></a> {% endif %}
 <br>
 <br>{% endfor %}{% endif %} {% endblock %}

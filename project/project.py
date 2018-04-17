@@ -241,15 +241,23 @@ def yelpRestaurantSearch():
                 location_json_string = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lati + "," + longi + "&key=AIzaSyAVPz6x8WGP1jhFxAqoeU-tE43ZPZl6n4o"
                 location_json = urllib2.urlopen(location_json_string)
                 loc_obj = json.load(location_json);
-                print loc_obj
                 location = loc_obj["results"][1]["formatted_address"]
 
         if error_there:
             return render_template('search.html', error=error)
         else:
             results = queryInstance.main(location, searchItem)
-            return render_template('searchresults.html', results=results, location=location)
-
+            if 'username' not in login_session:
+                return render_template('searchresults.html', results=results,
+                                       location=location)
+            else:
+                # adding recent search to the table/database
+                newSearch = RecentSearch(search=searchItem, location=location,
+                                         user_id=login_session['user_id'])
+                session.add(newSearch)
+                session.commit()
+                return render_template('searchresults.html', results=results,
+                        location=location, username=login_session['username'])
 
 
 if __name__ == '__main__':
