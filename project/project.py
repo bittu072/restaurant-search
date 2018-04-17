@@ -263,6 +263,7 @@ def yelpRestaurantSearch():
                 session.add(newSearch)
                 session.commit()
 
+                # ______________having error________need to update this
                 if(request.form['favorite']):
                     favorite_info = request.form['favorite_info']
                     newFav = Favorites(rest_name=favorite_info["name"],
