@@ -66,9 +66,9 @@ def login_required(f):
         if 'email' in login_session:
             return f(*args, **kwargs)
         else:
-            return render_template('login0.html',
-                                   error="Login first!!!! \
-                                   You are not allowed to access it")
+            flash("Please login first!!")
+            flash("You are not allowed to access the page you were trying")
+            return redirect(url_for('showLogin'))
     return decorated_function
 
 
@@ -262,6 +262,19 @@ def yelpRestaurantSearch():
                                          user_id=login_session['user_id'])
                 session.add(newSearch)
                 session.commit()
+
+                if(request.form['favorite']):
+                    favorite_info = request.form['favorite_info']
+                    newFav = Favorites(rest_name=favorite_info["name"],
+                                          rating=favorite_info["rating"],
+                                          link=favorite_info["url"],
+                                          number=favorite_info["phone"])
+                    print "_________________"
+                    print favorite_info["name"]+ favorite_info["rating"]
+                    +favorite_info["url"]+favorite_info["phone"]
+                    print "_________________"
+                    session.add(newFav)
+                    session.commit()
                 return render_template('searchresults.html', results=results,
                         location=location, username=login_session['username'])
 
@@ -271,6 +284,7 @@ def yelpRestaurantSearch():
 def userHome():
     if 'username' in login_session:
         return render_template('userhome.html', username=login_session['username'], uid=login_session['user_id'])
+
 
 
 @app.route('/userhome/<int:user_id>/recents')

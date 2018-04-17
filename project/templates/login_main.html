@@ -13,7 +13,7 @@
 
 
 <body>
-    {% extends "base.html" %} {% block content %}
+    {% extends "base.html" %} {% block content %} {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %} {{ message }} {% endfor %} {% endif %} {% endwith %}
 
     <!-- Add GOOGLE PLUS sign in here-->
 

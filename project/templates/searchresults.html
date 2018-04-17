@@ -14,6 +14,10 @@
 </a>
 <br> &#9742; {{res["phone"]}} {% if username %}
 <br>
-<a href="/demo"> <button class="">Favorite</button></a> {% endif %}
+<form method='POST'>
+    <input type="hidden" name="favorite" value="add">
+    <input type="hidden" name="favorite_info" value="{{res}}">
+    <button type="submit" class="">Add to Favorite</button>
+</form> {% endif %}
 <br>
 <br>{% endfor %}{% endif %} {% endblock %}
