@@ -1,0 +1,10 @@
+{% extends "base.html" %} {% block content %}
+
+<h1> Recent searches </h1>
+
+<a href="/yelprestsearch"> <button class="">Yelp new</button></a>
+
+<br> {% if recents %} {% for rec in recents %}
+<h2>{{rec["search"]}}</h2>
+<h4>{{rec["location"]}}</h4>
+<br> {% endfor %}{% endif %} {% endblock %}

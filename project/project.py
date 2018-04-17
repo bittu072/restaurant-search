@@ -6,8 +6,10 @@ from flask import make_response
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 
-from sqlalchemy import create_engine, asc
+from sqlalchemy import create_engine, asc, desc
 from sqlalchemy.orm import sessionmaker
+
+from functools import wraps
 
 import json
 import urllib2
@@ -17,7 +19,7 @@ import string
 import httplib2
 import requests
 
-from database_setup import Base, User
+from database_setup import Base, User, RecentSearch
 import yelpapi
 
 
@@ -52,6 +54,10 @@ def getUserID(email):
         return user.id
     except:
         return None
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
 
 
 def login_required(f):
@@ -258,6 +264,21 @@ def yelpRestaurantSearch():
                 session.commit()
                 return render_template('searchresults.html', results=results,
                         location=location, username=login_session['username'])
+
+
+@app.route('/userhome')
+@login_required
+def userHome():
+    if 'username' in login_session:
+        return render_template('userhome.html', username=login_session['username'], uid=login_session['user_id'])
+
+
+@app.route('/userhome/<int:user_id>/recents')
+@login_required
+def userRecents(user_id):
+    username = getUserInfo(user_id)
+    recents = session.query(RecentSearch).filter_by(user_id=user_id).all()
+    return render_template('recents.html', recents=recents)
 
 
 if __name__ == '__main__':

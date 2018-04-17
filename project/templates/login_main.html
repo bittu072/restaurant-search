@@ -42,8 +42,8 @@
                         if (result) {
                             $('#result').html('Login Successful!</br>' + result + '</br>Redirecting...')
                             setTimeout(function() {
-                                window.location.href = "/yelprestsearch";
-                            }, 4000);
+                                window.location.href = "/userhome";
+                            }, 500);
 
                         } else if (authResult['error']) {
                             console.log('There was an error: ' + authResult['error']);
@@ -58,7 +58,7 @@
     </script>
     <!--END GOOGLE PLUS SIGN IN -->
 
-    <a href="/demo"> <button class="">As a Guest</button></a>
+    <a href="/yelprestsearch"> <button class="">As a Guest</button></a>
 
     <!-- to show google plus image and login process -->
     <div id="result"></div>
