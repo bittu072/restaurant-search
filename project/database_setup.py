@@ -24,6 +24,17 @@ class RecentSearch(Base):
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
+class Favorites(Base):
+    __tablename__ = 'favorites'
+
+    id = Column(Integer, primary_key=True)
+    rest_name = Column(String(100), nullable=False)
+    rating = Column(Integer, nullable=False)
+    link = Column(String(500), nullable=False)
+    number = Column(String(20), nullable = False) # if they have extension so have 20 length
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+
 
 engine = create_engine('sqlite:///restaurant_data.db')
 
