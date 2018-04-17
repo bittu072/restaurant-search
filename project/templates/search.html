@@ -2,16 +2,50 @@
 
 <h1>Yelp it!!!!</h1>
 
-<form action="#" method="post">
+<form method='POST' action="#">
     <label for="name">Search:</label>
     <input type="text" maxlength="50" name="searchitem" placeholder="Search anything">
 
     <label for="description">Location:</label>
-    <input type="text" maxlength="50" name="location" placeholder="Location"> {% if error %}
+    <input type="text" maxlength="50" name="location" placeholder="Location">
+    <div id='submit_form' name='submit_form'> </div>{% if error %}
+
     <div style="color:red">{{error}}</div>
     {% endif %}
 
-
     <button type="submit" id="submit" value="Search"></span>Search</button>
 </form>
+
+<script>
+    $(document).ready(function() {
+        console.log("ready!");
+        getLocation();
+    });
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+
+                var input1 = document.createElement("input");
+                input1.setAttribute('type', 'text');
+                input1.setAttribute('name', 'lat');
+                input1.setAttribute('value', latitude);
+                input1.setAttribute("hidden", true);
+
+                var input2 = document.createElement("input");
+                input2.setAttribute('type', 'text');
+                input2.setAttribute('name', 'longi');
+                input2.setAttribute('value', longitude);
+                input2.setAttribute("hidden", true);
+
+                var parent = document.getElementById("submit_form");
+                parent.appendChild(input1);
+                parent.appendChild(input2);
+            });
+        }
+    }
+</script>
+
 {% endblock %}

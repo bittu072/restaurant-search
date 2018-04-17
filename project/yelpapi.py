@@ -16,21 +16,6 @@ class SearchQuery():
         # print json_obj
         time.sleep(1.0)
         data = json_obj["businesses"]
-        # print data
-        # count = 0
-        # item = {}
-        # for items in data:
-        #
-        #     item["name"] = items["name"]
-        #     item["rating"] = items["rating"]
-        #     item["url"] = items["url"]
-        #     try:
-        #         item["phone"] = items["phone"]
-        #     except:
-        #         item["phone"] = "No available Phone number"
-        #
-        #     count += count
-        # print item
 
         return data
 
@@ -50,7 +35,7 @@ class SearchQuery():
         session.close()
         return data
 
-    def search_string(self, search_term,location):
+    def search_string(self, search_term, location):
         #See the Yelp API for more details
         params = {}
         params["term"] = search_term

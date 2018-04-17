@@ -10,6 +10,7 @@ from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 
 import json
+import urllib2
 import os
 import random
 import string
@@ -229,9 +230,19 @@ def yelpRestaurantSearch():
             error_there = True
             error = error + "Please, mention seach item!! "
         location = request.form['location']
+        lati = request.form['lat']
+        longi = request.form['longi']
+
         if not location:
-            error_there = True
-            error = error + "Please, mention location!!"
+            if not (longi and lati):
+                error_there = True
+                error = error + "Please, mention location or allow the location!!"
+            else:
+                location_json_string = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lati + "," + longi + "&key=AIzaSyAVPz6x8WGP1jhFxAqoeU-tE43ZPZl6n4o"
+                location_json = urllib2.urlopen(location_json_string)
+                loc_obj = json.load(location_json);
+                print loc_obj
+                location = loc_obj["results"][1]["formatted_address"]
 
         if error_there:
             return render_template('search.html', error=error)
