@@ -269,9 +269,9 @@ def yelpRestaurantSearch():
                                          user_id=login_session['user_id'])
                 session.add(newSearch)
                 session.commit()
-                import pdb; pdb.set_trace()
 
-                fav_list_id = session.query(Favorites).options(load_only("yelp_id_str")).all()
+                fav_list_id = session.query(Favorites.yelp_id_str).all()
+                fav_list_id = [i[0] for i in fav_list_id]
                 for result in results:
                     if result['id'].encode('ascii','ignore') in fav_list_id:
                         result['fav_flag'] = 1
@@ -327,9 +327,6 @@ def userFavorites(user_id):
     username = getUserInfo(user_id)
     # reverse the order of the following query
     favo = session.query(Favorites).filter_by(user_id=user_id).order_by(desc(Favorites.id)).all()
-    print "____"
-    print favo
-    print "_____"
     return render_template('favorites.html', favorites=favo)
 
 

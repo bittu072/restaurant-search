@@ -3,7 +3,7 @@
 <h1>Restaurants</h1> You are searching near by <b class="locate">{{location}}</b>
 
 
-<br> {% if results %} {% for res in results %}
+<br> {% if results %} {% set count = 0 -%} {% for res in results %}
 <h3>{{res["name"]}}</h3> {% set rating=res["rating"] %}
 <h2>
     {% if rating==1 %} &#9733; {% elif rating==1.5 %}&#9733;½ {% elif rating==2 %}&#9733;&#9733; {% elif rating==2.5 %}&#9733;&#9733;½ {% elif rating==3 %}&#9733;&#9733;&#9733; {% elif rating==3.5 %}&#9733;&#9733;&#9733;½ {% elif rating==4 %}&#9733;&#9733;&#9733;&#9733;
@@ -16,50 +16,53 @@
 <br>
 <form>
     <!-- <input type="hidden" name="favorite_info" value="{{res}}"> -->
-    <input type="hidden" name="favorite_name" id="favorite_name" value="{{res['name']}}">
-    <input type="hidden" name="favorite_url" id="favorite_url" value="{{url}}">
-    <input type="hidden" name="favorite_rating" id="favorite_rating" value="{{rating}}">
-    <input type="hidden" name="favorite_num" id="favorite_num" value="{{res['phone']}}">
-    <input type="hidden" name="favorite_yelp_id" id="favorite_yelp_id" value="{{res['id']}}"> {% if res["fav_flag"] == 0 %}
+    <input type="hidden" name="favorite_name" id="favorite_name{{count}}" value="{{res['name']}}">
+    <input type="hidden" name="favorite_url" id="favorite_url{{count}}" value="{{url}}">
+    <input type="hidden" name="favorite_rating" id="favorite_rating{{count}}" value="{{rating}}">
+    <input type="hidden" name="favorite_num" id="favorite_num{{count}}" value="{{res['phone']}}">
+    <input type="hidden" name="favorite_yelp_id" id="favorite_yelp_id{{count}}" value="{{res['id']}}"> {% if res["fav_flag"] == 0 %}
 
-    <input type="hidden" name="favorite_action" id="favorite_action" value="add">
-    <button type="button" id="submit_input" class="submit_input">Add to Favorite</button> {% else %}
+    <input type="hidden" name="favorite_action" id="favorite_action{{count}}" value="add">
+    <button type="button" id="submit_input" class="{{count}}">Add to Favorite</button> {% else %}
 
-    <input type="hidden" name="favorite_action" id="favorite_action" value="del">
-    <button type="button" id="submit_input" class="submit_input">Remove from Favorite</button> {% endif %}
+    <input type="hidden" name="favorite_action" id="favorite_action{{count}}" value="del">
+    <button type="button" id="submit_input" class="{{count}}">Remove from Favorite</button> {% endif %}
 </form> {% endif %}
-<br>
+<br> {% set count = count + 1 -%}
 <br>{% endfor %}{% endif %}
 
 <script>
-    $("#submit_input").click(function() {
-        alert("in")
-        var favorite_num = $("#favorite_num").val();
-        var favorite_name = $("#favorite_name").val();
-        var favorite_rating = $("#favorite_rating").val();
-        var favorite_url = $("#favorite_url").val();
-        var favorite_yelp_id = $("#favorite_yelp_id").val();
-        var action = $("#favorite_action").val();
+    $(document).ready(function() {
+        $(document).on('click', '#submit_input', function() {
+            var count_num = this.className;
+            var favorite_num = $("#favorite_num" + count_num).val();
 
-        $.ajax({
-            url: "/adddelfavorite",
-            type: "post",
-            data: {
-                favorite_num: favorite_num,
-                favorite_url: favorite_url,
-                favorite_name: favorite_name,
-                favorite_rating: favorite_rating,
-                favorite_yelp_id: favorite_yelp_id,
-                action: action
-            },
-            success: function(response) {
-                alert('Added to fav.')
-                // $("#place_for_suggestions").html(response);
-            },
-            error: function(xhr) {
-                alert('Error')
-                //Do Something to handle error
-            }
+            var favorite_name = $("#favorite_name" + count_num).val();
+            var favorite_rating = $("#favorite_rating" + count_num).val();
+            var favorite_url = $("#favorite_url" + count_num).val();
+            var favorite_yelp_id = $("#favorite_yelp_id" + count_num).val();
+            var action = $("#favorite_action" + count_num).val();
+
+            $.ajax({
+                url: "/adddelfavorite",
+                type: "post",
+                data: {
+                    favorite_num: favorite_num,
+                    favorite_url: favorite_url,
+                    favorite_name: favorite_name,
+                    favorite_rating: favorite_rating,
+                    favorite_yelp_id: favorite_yelp_id,
+                    action: action
+                },
+                success: function(response) {
+                    alert('Added to fav.')
+                    // $("#place_for_suggestions").html(response);
+                },
+                error: function(xhr) {
+                    alert('Error')
+                    //Do Something to handle error
+                }
+            });
         });
     });
 </script> {% endblock %}
