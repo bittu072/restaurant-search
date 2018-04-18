@@ -14,9 +14,13 @@
 </a>
 <br> &#9742; {{res["phone"]}} {% if username %}
 <br>
-<form method='POST'>
+<form method='POST' action="/addfavorite">
     <input type="hidden" name="favorite" value="add">
-    <input type="hidden" name="favorite_info" value="{{res}}">
+    <!-- <input type="hidden" name="favorite_info" value="{{res}}"> -->
+    <input type="hidden" name="favorite_name" value="{{res['name']}}">
+    <input type="hidden" name="favorite_url" value="{{url}}">
+    <input type="hidden" name="favorite_rating" value="{{rating}}">
+    <input type="hidden" name="favorite_num" value="{{res['phone']}}">
     <button type="submit" class="">Add to Favorite</button>
 </form> {% endif %}
 <br>

@@ -19,7 +19,7 @@ import string
 import httplib2
 import requests
 
-from database_setup import Base, User, RecentSearch
+from database_setup import Base, User, RecentSearch, Favorites
 import yelpapi
 
 
@@ -72,10 +72,16 @@ def login_required(f):
     return decorated_function
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
 
 @app.route('/')
 @app.route('/login')
 def showLogin():
+    if 'username' in login_session:
+        return redirect("/userhome")
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
@@ -264,20 +270,28 @@ def yelpRestaurantSearch():
                 session.commit()
 
                 # ______________having error________need to update this
-                if(request.form['favorite']):
-                    favorite_info = request.form['favorite_info']
-                    newFav = Favorites(rest_name=favorite_info["name"],
-                                          rating=favorite_info["rating"],
-                                          link=favorite_info["url"],
-                                          number=favorite_info["phone"])
-                    print "_________________"
-                    print favorite_info["name"]+ favorite_info["rating"]
-                    +favorite_info["url"]+favorite_info["phone"]
-                    print "_________________"
-                    session.add(newFav)
-                    session.commit()
                 return render_template('searchresults.html', results=results,
                         location=location, username=login_session['username'])
+
+
+@app.route('/addfavorite', methods=['POST'])
+@login_required
+def addFavorite():
+    if(request.form['favorite'] and (request.form['favorite'] == "add")):
+        # favorite_info = request.form['favorite_info']
+        # newFav = Favorites(rest_name=favorite_info["name"],
+        #                       rating=favorite_info["rating"],
+        #                       link=favorite_info["url"],
+        #                       number=favorite_info["phone"])
+        fav_name = request.form['favorite_name']
+        fav_url = request.form['favorite_url']
+        fav_rating = request.form['favorite_rating']
+        fav_num = request.form['favorite_num']
+        newFav = Favorites(rest_name=fav_name, rating=fav_rating,
+                           link=fav_url, number=fav_num, user_id=login_session['user_id'])
+        session.add(newFav)
+        session.commit()
+    return redirect('/yelprestsearch#')
 
 
 @app.route('/userhome')
@@ -292,8 +306,21 @@ def userHome():
 @login_required
 def userRecents(user_id):
     username = getUserInfo(user_id)
-    recents = session.query(RecentSearch).filter_by(user_id=user_id).all()
+    # reverse the order of the following query
+    recents = session.query(RecentSearch).filter_by(user_id=user_id).order_by(desc(RecentSearch.id)).limit(10).all()
     return render_template('recents.html', recents=recents)
+
+
+@app.route('/userhome/<int:user_id>/favorites')
+@login_required
+def userFavorites(user_id):
+    username = getUserInfo(user_id)
+    # reverse the order of the following query
+    favo = session.query(Favorites).filter_by(user_id=user_id).order_by(desc(Favorites.id)).all()
+    print "____"
+    print favo
+    print "_____"
+    return render_template('favorites.html', favorites=favo)
 
 
 if __name__ == '__main__':

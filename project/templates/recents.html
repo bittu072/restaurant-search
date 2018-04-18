@@ -7,4 +7,5 @@
 <br> {% if recents %} {% for rec in recents %}
 <h2>{{rec["search"]}}</h2>
 <h4>{{rec["location"]}}</h4>
+<h4>{{rec["created_date"]}}</h4>
 <br> {% endfor %}{% endif %} {% endblock %}

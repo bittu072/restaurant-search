@@ -1,4 +1,6 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+import datetime
+
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -21,6 +23,7 @@ class RecentSearch(Base):
     id = Column(Integer, primary_key=True)
     search = Column(String(100), nullable=False)
     location = Column(String(300), nullable=False)
+    created_date = Column(DateTime, default=datetime.datetime.utcnow)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
