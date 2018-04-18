@@ -55,7 +55,12 @@
                     action: action
                 },
                 success: function(response) {
-                    alert('Added to fav.')
+                    if (action === "add") {
+                        alert('Added to fav.')
+                    } else {
+                        alert('Removed the favorite.')
+                    }
+
                     // $("#place_for_suggestions").html(response);
                 },
                 error: function(xhr) {

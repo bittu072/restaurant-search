@@ -299,7 +299,7 @@ def adddelfavorite():
             session.commit()
         elif (request.form['action'] == "del"):
             del_item = session.query(Favorites).filter_by(yelp_id_str=fav_yelp_id).one()
-            session.add(del_item)
+            session.delete(del_item)
             session.commit()
     return "submitted"
 
