@@ -66,9 +66,10 @@ def login_required(f):
         if 'email' in login_session:
             return f(*args, **kwargs)
         else:
-            flash("Please login first!!")
-            flash("You are not allowed to access the page you were trying")
-            return redirect(url_for('showLogin'))
+            return render_template('login_main.html',
+                                   error="Please login first!!\
+                                    You are not allowed to access the\
+                                     page you were trying")
     return decorated_function
 
 
@@ -178,7 +179,7 @@ def gconnect():
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: \
         150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
+    # flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
 
