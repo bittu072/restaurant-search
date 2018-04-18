@@ -32,6 +32,7 @@ class Favorites(Base):
 
     id = Column(Integer, primary_key=True)
     rest_name = Column(String(100), nullable=False)
+    yelp_id_str = Column(String(100), nullable=False)
     rating = Column(Integer, nullable=False)
     link = Column(String(500), nullable=False)
     number = Column(String(20), nullable = False) # if they have extension so have 20 length

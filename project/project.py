@@ -269,30 +269,39 @@ def yelpRestaurantSearch():
                                          user_id=login_session['user_id'])
                 session.add(newSearch)
                 session.commit()
+                import pdb; pdb.set_trace()
 
-                # ______________having error________need to update this
+                fav_list_id = session.query(Favorites).options(load_only("yelp_id_str")).all()
+                for result in results:
+                    if result['id'].encode('ascii','ignore') in fav_list_id:
+                        result['fav_flag'] = 1
+                    else:
+                        result['fav_flag'] = 0
                 return render_template('searchresults.html', results=results,
                         location=location, username=login_session['username'])
 
 
-@app.route('/addfavorite', methods=['POST'])
+@app.route('/adddelfavorite', methods=['POST'])
 @login_required
-def addFavorite():
-    if(request.form['favorite'] and (request.form['favorite'] == "add")):
-        # favorite_info = request.form['favorite_info']
-        # newFav = Favorites(rest_name=favorite_info["name"],
-        #                       rating=favorite_info["rating"],
-        #                       link=favorite_info["url"],
-        #                       number=favorite_info["phone"])
-        fav_name = request.form['favorite_name']
-        fav_url = request.form['favorite_url']
-        fav_rating = request.form['favorite_rating']
-        fav_num = request.form['favorite_num']
-        newFav = Favorites(rest_name=fav_name, rating=fav_rating,
-                           link=fav_url, number=fav_num, user_id=login_session['user_id'])
-        session.add(newFav)
-        session.commit()
-    return redirect('/yelprestsearch#')
+def adddelfavorite():
+    if (request.form['action']):
+        fav_yelp_id = request.form['favorite_yelp_id']
+        if (request.form['action'] == "add"):
+            fav_name = request.form['favorite_name']
+            fav_url = request.form['favorite_url']
+            fav_rating = request.form['favorite_rating']
+            fav_num = request.form['favorite_num']
+            itemFav = Favorites(rest_name=fav_name, rating=fav_rating,
+                               link=fav_url, number=fav_num,
+                               yelp_id_str=fav_yelp_id,
+                               user_id=login_session['user_id'])
+            session.add(itemFav)
+            session.commit()
+        elif (request.form['action'] == "del"):
+            del_item = session.query(Favorites).filter_by(yelp_id_str=fav_yelp_id).one()
+            session.add(del_item)
+            session.commit()
+    return "submitted"
 
 
 @app.route('/userhome')
