@@ -15,7 +15,10 @@ class SearchQuery():
         json_obj = self.api_query(params)
         # print json_obj
         time.sleep(1.0)
-        data = json_obj["businesses"]
+        if "error" in json_obj.keys():
+            data = []
+        else:
+            data = json_obj["businesses"]
 
         return data
 

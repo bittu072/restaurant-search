@@ -4,24 +4,24 @@
 
 <a href="/yelprestsearch"> <button class="">Yelp new</button></a>
 
-<br> {% if favorites %} {% for fav in favorites %}
-<h2>{{fav["rest_name"]}}</h2>
-<h4>{% set rating=fav["rating"] %}
+<br> {% if favorites %} {% set count = 0 -%} {% for fav in favorites %}
+<h2 class="{{fav['yelp_id_str']}}">{{fav["rest_name"]}}</h2>
+<h4 class="{{fav['yelp_id_str']}}">{% set rating=fav["rating"] %}
     {% if rating==1 %} &#9733; {% elif rating==1.5 %}&#9733;½
     {% elif rating==2 %}&#9733;&#9733; {% elif rating==2.5 %}&#9733;&#9733;½
     {% elif rating==3 %}&#9733;&#9733;&#9733; {% elif rating==3.5 %}&#9733;&#9733;&#9733;½
     {% elif rating==4 %}&#9733;&#9733;&#9733;&#9733;{% elif rating==4.5 %}&#9733;&#9733;&#9733;&#9733;½
     {% elif rating==5 %}&#9733;&#9733;&#9733;&#9733;&#9733; {% endif %}
 </h4>
-<h4>{{fav["number"]}}</h4> {% set url=fav["link"] %}
+<h4 class="{{fav['yelp_id_str']}}">{{fav["number"]}}</h4> {% set url=fav["link"] %}
 
-<a href="{{url}}" style="text-decoration: none">
+<a href="{{url}}" style="text-decoration: none" class="{{fav['yelp_id_str']}}">
             <i class="fa fa-yelp yelpcustom">  <b>Yelp it </b></i>
 </a>
 <form>
     <button type="button" id="del_entry" class="{{fav['yelp_id_str']}}">Remove from Favorite</button>
 </form>
-{% endfor %} {% endif %}
+{% set count = count + 1 -%} {% endfor %} {% endif %}
 <script>
     $(document).ready(function() {
         $(document).on('click', '#del_entry', function() {
@@ -37,6 +37,7 @@
                 },
                 success: function(response) {
                     alert('Removed the favorite.')
+                    $('.' + favorite_yelp_id).remove();
                     // $("#place_for_suggestions").html(response);
                 },
                 error: function(xhr) {

@@ -262,7 +262,7 @@ def yelpRestaurantSearch():
             results = queryInstance.main(location, searchItem)
             if 'username' not in login_session:
                 return render_template('searchresults.html', results=results,
-                                       location=location)
+                                       location=location, searchItem=searchItem)
             else:
                 # adding recent search to the table/database
                 newSearch = RecentSearch(search=searchItem, location=location,
@@ -278,7 +278,7 @@ def yelpRestaurantSearch():
                     else:
                         result['fav_flag'] = 0
                 return render_template('searchresults.html', results=results,
-                        location=location, username=login_session['username'])
+                        location=location, searchItem=searchItem, username=login_session['username'])
 
 
 @app.route('/adddelfavorite', methods=['POST'])
