@@ -1,15 +1,11 @@
-from flask import Flask, render_template, request, redirect
-from flask import session as login_session
+from flask import Flask, request, redirect
 from flask import jsonify, url_for, flash
 from flask import make_response
 
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 
-from sqlalchemy import create_engine, asc, desc
-from sqlalchemy.orm import sessionmaker
-
-from functools import wraps
+from sqlalchemy import asc, desc
 
 import json
 import urllib2
@@ -19,58 +15,15 @@ import string
 import httplib2
 import requests
 
-from database_setup import Base, User, RecentSearch, Favorites
-import yelpapi
+from helper.helper import *
+import thirdparty.yelpapi as yelpapi
 
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../view/templates',
+            static_folder='../view/static')
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
-
-
-# Connect to Database and create database session
-engine = create_engine('sqlite:///restaurant_data.db')
-Base.metadata.bind = engine
-
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
-
-
-# creates user in the database based on the google's login info
-def createUser(login_session):
-    newUser = User(name=login_session['username'], email=login_session[
-                   'email'], picture=login_session['picture'])
-    session.add(newUser)
-    session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one()
-    return user.id
-
-
-# gets the user id
-def getUserID(email):
-    try:
-        user = session.query(User).filter_by(email=email).one()
-        return user.id
-    except:
-        return None
-
-def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).one()
-    return user
-
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'email' in login_session:
-            return f(*args, **kwargs)
-        else:
-            return render_template('login_main.html',
-                                   error="Please login first!!\
-                                    You are not allowed to access the\
-                                     page you were trying")
-    return decorated_function
 
 
 @app.errorhandler(404)
@@ -328,14 +281,3 @@ def userFavorites(user_id):
     # reverse the order of the following query
     favo = session.query(Favorites).filter_by(user_id=user_id).order_by(desc(Favorites.id)).all()
     return render_template('favorites.html', favorites=favo)
-
-
-if __name__ == '__main__':
-    app.secret_key = 'super_secret_key'
-    # always turn off debugging
-    # when the application moves to production environment.
-    app.debug = True
-    # defines which port to use
-    port = int(os.environ.get("PORT", 5000))
-    # defines to consider host as localhost
-    app.run(host='0.0.0.0', port=port)
