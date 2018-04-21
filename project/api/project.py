@@ -35,7 +35,7 @@ def page_not_found(e):
 @app.route('/login')
 def showLogin():
     if 'username' in login_session:
-        return redirect("/yelprestsearch")
+        return redirect("/userhome")
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
@@ -140,6 +140,9 @@ def gconnect():
 # google logout
 @app.route('/gdisconnect')
 def gdisconnect():
+    if not "access_token" in login_session:
+        return render_template('login_main.html', error="you are not logged in!\
+                                Please login first!!")
     access_token = login_session['access_token']
     print 'In gdisconnect access token is %s', access_token
     print 'User name is: '
@@ -182,9 +185,17 @@ def showdemo():
     return render_template('demo.html', STATE=state)
 
 temp_location = None
+
+
+@app.route('/userhome', methods=['GET', 'POST'])
 @app.route('/yelprestsearch', methods=['GET', 'POST'])
 def yelpRestaurantSearch():
     global temp_location
+    rule = request.url_rule
+    if 'userhome' in rule.rule:
+        if 'username' not in login_session:
+            return render_template('search.html', error="you are not allowed to\
+                                   use that page. Please login to access that page")
     if request.method == 'GET':
         if 'username' in login_session:
             return render_template('search.html', username=login_session['username'], uid=login_session['user_id'])
