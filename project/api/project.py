@@ -244,9 +244,10 @@ def adddelfavorite():
             fav_url = request.form['favorite_url']
             fav_rating = request.form['favorite_rating']
             fav_num = request.form['favorite_num']
+            fav_img = request.form['favorite_img']
             itemFav = Favorites(rest_name=fav_name, rating=fav_rating,
                                link=fav_url, number=fav_num,
-                               yelp_id_str=fav_yelp_id,
+                               yelp_id_str=fav_yelp_id, picture=fav_img,
                                user_id=login_session['user_id'])
             session.add(itemFav)
             session.commit()

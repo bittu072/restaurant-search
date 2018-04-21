@@ -4,6 +4,7 @@
 
 
 <br> {% if results %} {% set count = 0 -%} {% for res in results %}
+<img src="{{res['image_url']}}">
 <h3>{{res["name"]}}</h3> {% set rating=res["rating"] %}
 <h2>
     {% if rating==1 %} &#9733; {% elif rating==1.5 %}&#9733;½ {% elif rating==2 %}&#9733;&#9733; {% elif rating==2.5 %}&#9733;&#9733;½ {% elif rating==3 %}&#9733;&#9733;&#9733; {% elif rating==3.5 %}&#9733;&#9733;&#9733;½ {% elif rating==4 %}&#9733;&#9733;&#9733;&#9733;
@@ -20,6 +21,7 @@
     <input type="hidden" name="favorite_url" id="favorite_url{{count}}" value="{{url}}">
     <input type="hidden" name="favorite_rating" id="favorite_rating{{count}}" value="{{rating}}">
     <input type="hidden" name="favorite_num" id="favorite_num{{count}}" value="{{res['phone']}}">
+    <input type="hidden" name="favorite_img" id="favorite_img{{count}}" value="{{res['image_url']}}">
     <input type="hidden" name="favorite_yelp_id" id="favorite_yelp_id{{count}}" value="{{res['id']}}"> {% if res["fav_flag"] == 0 %}
 
     <input type="hidden" name="favorite_action" id="favorite_action{{count}}" value="add">
@@ -44,6 +46,7 @@
             var favorite_rating = $("#favorite_rating" + count_num).val();
             var favorite_url = $("#favorite_url" + count_num).val();
             var favorite_yelp_id = $("#favorite_yelp_id" + count_num).val();
+            var favorite_img = $("#favorite_img" + count_num).val();
             var action = $("#favorite_action" + count_num).val();
 
             $.ajax({
@@ -55,6 +58,7 @@
                     favorite_name: favorite_name,
                     favorite_rating: favorite_rating,
                     favorite_yelp_id: favorite_yelp_id,
+                    favorite_img: favorite_img,
                     action: action
                 },
                 success: function(response) {

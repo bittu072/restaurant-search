@@ -5,6 +5,8 @@
 <a href="/yelprestsearch"> <button class="">Yelp new</button></a>
 
 <br> {% if favorites %} {% set count = 0 -%} {% for fav in favorites %}
+
+<img src="{{fav['picture']}}" class="{{fav['yelp_id_str']}}">
 <h2 class="{{fav['yelp_id_str']}}">{{fav["rest_name"]}}</h2>
 <h4 class="{{fav['yelp_id_str']}}">{% set rating=fav["rating"] %}
     {% if rating==1 %} &#9733; {% elif rating==1.5 %}&#9733;½

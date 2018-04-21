@@ -35,6 +35,7 @@ class Favorites(Base):
     yelp_id_str = Column(String(100), nullable=False)
     rating = Column(Integer, nullable=False)
     link = Column(String(500), nullable=False)
+    picture = Column(String(250))
     number = Column(String(20), nullable = False) # if they have extension so have 20 length
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
