@@ -1,11 +1,36 @@
 {% extends "base.html" %} {% block content %}
 
-<h1> Recent searches </h1>
 
-<a href="/yelprestsearch"> <button class="">Yelp new</button></a>
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">Recent searches</h1>
+        <p class="lead text-muted"> <i class="fa fa-yelp yelpcustom">Yelp it!!!!!</p>
+        <form method="POST" action="/yelprestsearch">
+            <div class="form-group">
+                <div class="form-row">
+                    <div class="col">
+                        <input type="text" class="form-control" maxlength="50" name="searchitem" placeholder="New Seacrh" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="location" placeholder="Location">
+                    </div>
+                </div>
+            </div>
+            <p>
+                <button type="submit" class="btn btn-primary" type="submit"> Search </button>
+            </p>
+        </form>
+    </div>
+</section>
 
-<br> {% if recents %} {% for rec in recents %}
-<h2>{{rec["search"]}}</h2>
-<h4>{{rec["location"]}}</h4>
-<h4>{{rec["created_date"]}}</h4>
-<br> {% endfor %}{% endif %} {% endblock %}
+<div class="row p-4">
+    {% if recents %} {% for rec in recents %}
+    <div class="col">
+        <h3 class="blog-post-title">{{rec["search"]}}</h3>
+        <p class="blog-post-meta">{{rec["location"]}}<br>{{rec["created_date"]}}</p>
+    </div>
+    {% endfor %}{% endif %}
+</div>
+
+
+</main>{% endblock %}

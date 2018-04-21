@@ -1,92 +1,134 @@
 {% extends "base.html" %} {% block content %}
+<main role="main">
 
-<h1>Restaurants</h1> You are searching <b>{{searchItem}}</b> near by <b class="locate">{{location}}</b>
+    <section class="jumbotron text-center">
+        <div class="container">
+            <h1 class="jumbotron-heading">Yelp it!!!!!</h1>
+            <p class="lead text-muted"> <i class="fa fa-yelp yelpcustom"> You are searching <b>{{searchItem}}</b> near by <b class="locate">{{location}}</b> </p>
 
 
-<br> {% if results %} {% set count = 0 -%} {% for res in results %}
-<img src="{{res['image_url']}}">
-<h3>{{res["name"]}}</h3> {% set rating=res["rating"] %}
-<h2>
-    {% if rating==1 %} &#9733; {% elif rating==1.5 %}&#9733;½ {% elif rating==2 %}&#9733;&#9733; {% elif rating==2.5 %}&#9733;&#9733;½ {% elif rating==3 %}&#9733;&#9733;&#9733; {% elif rating==3.5 %}&#9733;&#9733;&#9733;½ {% elif rating==4 %}&#9733;&#9733;&#9733;&#9733;
-    {% elif rating==4.5 %}&#9733;&#9733;&#9733;&#9733;½ {% elif rating==5 %}&#9733;&#9733;&#9733;&#9733;&#9733; {% endif %}
-</h2> {% set url=res["url"] %}
-<a href="{{url}}" style="text-decoration: none">
-            <i class="fa fa-yelp yelpcustom">  <b>Yelp it </b></i>
-</a>
-<br> &#9742; {{res["phone"]}} {% if username %}
-<br>
-<form>
-    <!-- <input type="hidden" name="favorite_info" value="{{res}}"> -->
-    <input type="hidden" name="favorite_name" id="favorite_name{{count}}" value="{{res['name']}}">
-    <input type="hidden" name="favorite_url" id="favorite_url{{count}}" value="{{url}}">
-    <input type="hidden" name="favorite_rating" id="favorite_rating{{count}}" value="{{rating}}">
-    <input type="hidden" name="favorite_num" id="favorite_num{{count}}" value="{{res['phone']}}">
-    <input type="hidden" name="favorite_img" id="favorite_img{{count}}" value="{{res['image_url']}}">
-    <input type="hidden" name="favorite_yelp_id" id="favorite_yelp_id{{count}}" value="{{res['id']}}"> {% if res["fav_flag"] == 0 %}
 
-    <input type="hidden" name="favorite_action" id="favorite_action{{count}}" value="add">
-    <button type="button" id="submit_input" class="{{count}}">Add to Favorite</button> {% else %}
 
-    <input type="hidden" name="favorite_action" id="favorite_action{{count}}" value="del">
-    <button type="button" id="submit_input" class="{{count}}">Remove from Favorite</button> {% endif %}
-</form>
-{% endif %}
+                <form method="POST" action="/yelprestsearch">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col">
+                                <input type="text" class="form-control" maxlength="50" name="searchitem" placeholder="New Seacrh"required>
+                            </div>
+                            <div class="col">
+                                <input type="text" class="form-control" name="location" placeholder="Location">
+                            </div>
+                        </div>
+                    </div>
+                    <p>
+                        <button type="submit" class="btn btn-primary" type="submit"> Search </button>
+                    </p>
+                </form>
 
-<br> {% set count = count + 1 -%}
-<br> {% endfor %} {% else %}
-<h3> No data found!!! </h3> {% endif %}
 
-<script>
-    $(document).ready(function() {
-        $(document).on('click', '#submit_input', function() {
-            var count_num = this.className;
-            var favorite_num = $("#favorite_num" + count_num).val();
+            </div>
+        </section>
 
-            var favorite_name = $("#favorite_name" + count_num).val();
-            var favorite_rating = $("#favorite_rating" + count_num).val();
-            var favorite_url = $("#favorite_url" + count_num).val();
-            var favorite_yelp_id = $("#favorite_yelp_id" + count_num).val();
-            var favorite_img = $("#favorite_img" + count_num).val();
-            var action = $("#favorite_action" + count_num).val();
+        <div class="album py-5 bg-light">
+            <div class="container">
+                <div class="row">
+                    {% if results %} {% set count = 0 -%} {% for res in results %}
+                    <div class="col-md-3">
+                        <div class="card mb-3 box-shadow">
+                            <img class="card-img-top img-sub" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" src="{{res['image_url']}}" alt="Card image cap">
+                            <div class="card-body">
+                                <p class="h5"> <a href="{{res['url']}}"> {{res["name"]}} </a></p>
+                                <p class="card-text"> &#9742; {{res["phone"]}}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        {% if username %}
+                                        <form>
+                                            <!-- <input type="hidden" name="favorite_info" value="{{res}}"> -->
+                                            <input type="hidden" name="favorite_name" id="favorite_name{{count}}" value="{{res['name']}}">
+                                            <input type="hidden" name="favorite_url" id="favorite_url{{count}}" value="{{url}}">
+                                            <input type="hidden" name="favorite_rating" id="favorite_rating{{count}}" value="{{rating}}">
+                                            <input type="hidden" name="favorite_num" id="favorite_num{{count}}" value="{{res['phone']}}">
+                                            <input type="hidden" name="favorite_img" id="favorite_img{{count}}" value="{{res['image_url']}}">
+                                            <input type="hidden" name="favorite_yelp_id" id="favorite_yelp_id{{count}}" value="{{res['id']}}"> {% if res["fav_flag"] == 0 %}
 
-            $.ajax({
-                url: "/adddelfavorite",
-                type: "post",
-                data: {
-                    favorite_num: favorite_num,
-                    favorite_url: favorite_url,
-                    favorite_name: favorite_name,
-                    favorite_rating: favorite_rating,
-                    favorite_yelp_id: favorite_yelp_id,
-                    favorite_img: favorite_img,
-                    action: action
-                },
-                success: function(response) {
-                    if (action === "add") {
-                        alert('Added to fav.')
-                        $("#favorite_action" + count_num).replaceWith('<input type="hidden" \
-                         name="favorite_action" id="favorite_action' +
-                            count_num + '" value="del">')
-                        $("." + count_num).replaceWith('<button type="button" \
-                         id="submit_input" class="' + count_num + '"> \
-                         Remove from Favorite</button>');
-                    } else {
-                        alert('Removed the favorite.')
-                        $("#favorite_action" + count_num).replaceWith('<input type="hidden" \
-                         name="favorite_action" id="favorite_action' +
-                            count_num + '" value="add">')
-                        $("." + count_num).replaceWith('<button type="button" \
-                         id="submit_input" class="' + count_num + '"> \
-                         Add to Favorite</button>');
+                                            <input type="hidden" name="favorite_action" id="favorite_action{{count}}" value="add">
+                                            <button type="button" id="{{count}}" class="temp_click btn btn-sm btn-outline-secondary">Add to Favorite</button> {% else %}
+
+                                            <input type="hidden" name="favorite_action" id="favorite_action{{count}}" value="del">
+                                            <button type="button" id="{{count}}" class="temp_click btn btn-sm btn-outline-secondary">Remove Favorite</button> {% endif %}
+                                        </form>
+                                        {% endif %}
+                                        <!-- <button type="button" class="btn btn-sm btn-outline-secondary">Add to Favourite</button> -->
+                                    </div>
+                                    <small class="text-muted">
+                                        {% set rating=res["rating"] %}
+                                            {% if rating==1 %} &#9733; {% elif rating==1.5 %} &#9733; ½ {% elif rating==2 %} &#9733; &#9733; {% elif rating==2.5 %} &#9733; &#9733; ½ {% elif rating==3 %} &#9733; &#9733; &#9733; {% elif rating==3.5 %} &#9733; &#9733; &#9733; ½ {% elif rating==4 %} &#9733; &#9733; &#9733; &#9733;
+                                            {% elif rating==4.5 %} &#9733; &#9733; &#9733; &#9733; ½ {% elif rating==5 %} &#9733; &#9733; &#9733; &#9733; &#9733; {% endif %}
+                                        </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% set count = count + 1 -%}
+                    {% endfor %} {% else %}
+                    <h3> No data found!!! </h3> {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        $(document).ready(function() {
+            $(document).on('click', '.temp_click', function() {
+                var count_num = this.id;
+                var favorite_num = $("#favorite_num" + count_num).val();
+
+                var favorite_name = $("#favorite_name" + count_num).val();
+                var favorite_rating = $("#favorite_rating" + count_num).val();
+                var favorite_url = $("#favorite_url" + count_num).val();
+                var favorite_yelp_id = $("#favorite_yelp_id" + count_num).val();
+                var favorite_img = $("#favorite_img" + count_num).val();
+                var action = $("#favorite_action" + count_num).val();
+
+                $.ajax({
+                    url: "/adddelfavorite",
+                    type: "post",
+                    data: {
+                        favorite_num: favorite_num,
+                        favorite_url: favorite_url,
+                        favorite_name: favorite_name,
+                        favorite_rating: favorite_rating,
+                        favorite_yelp_id: favorite_yelp_id,
+                        favorite_img: favorite_img,
+                        action: action
+                    },
+                    success: function(response) {
+                        if (action === "add") {
+                            alert('Added to fav.')
+                            $("#favorite_action" + count_num).replaceWith('<input type="hidden" \
+                             name="favorite_action" id="favorite_action' +
+                                count_num + '" value="del">')
+                            $("#" + count_num).replaceWith('<button type="button" \
+                             id="' + count_num + '" class="temp_click btn btn-sm btn-outline-secondary"> \
+                             Remove Favorite</button>');
+                        } else {
+                            alert('Removed the favorite.')
+                            $("#favorite_action" + count_num).replaceWith('<input type="hidden" \
+                             name="favorite_action" id="favorite_action' +
+                                count_num + '" value="add">')
+                            $("#" + count_num).replaceWith('<button type="button" \
+                             id="' + count_num + '" class="temp_click btn btn-sm btn-outline-secondary"> \
+                             Add to Favorite</button>');
+                        }
+
+                        // $("#place_for_suggestions").html(response);
+                    },
+                    error: function(xhr) {
+                        alert('Error')
+                        //Do Something to handle error
                     }
-
-                    // $("#place_for_suggestions").html(response);
-                },
-                error: function(xhr) {
-                    alert('Error')
-                    //Do Something to handle error
-                }
+                });
             });
         });
-    });
-</script> {% endblock %}
+    </script> {% endblock %}

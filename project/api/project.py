@@ -35,7 +35,7 @@ def page_not_found(e):
 @app.route('/login')
 def showLogin():
     if 'username' in login_session:
-        return redirect("/userhome")
+        return redirect("/yelprestsearch")
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
@@ -181,12 +181,14 @@ def showdemo():
     # return "The current session state is %s" % login_session['state']
     return render_template('demo.html', STATE=state)
 
-
+temp_location = None
 @app.route('/yelprestsearch', methods=['GET', 'POST'])
 def yelpRestaurantSearch():
+    global temp_location
     if request.method == 'GET':
+        if 'username' in login_session:
+            return render_template('search.html', username=login_session['username'], uid=login_session['user_id'])
         return render_template('search.html')
-    # else part would be for the POST
     else:
         error_there = False
         error=""
@@ -196,18 +198,26 @@ def yelpRestaurantSearch():
             error_there = True
             error = error + "Please, mention seach item!! "
         location = request.form['location']
-        lati = request.form['lat']
-        longi = request.form['longi']
+        lati = None
+        longi = None
 
         if not location:
-            if not (longi and lati):
-                error_there = True
-                error = error + "Please, mention location or allow the location!!"
+            if not temp_location:
+
+                if ("lat" and "longi") in request.form:
+                    lati = request.form['lat']
+                    longi = request.form['longi']
+                if not (longi and lati):
+                    error_there = True
+                    error = error + "Please, mention location or allow the location!!"
+                else:
+                    location_json_string = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lati + "," + longi + "&key=AIzaSyAVPz6x8WGP1jhFxAqoeU-tE43ZPZl6n4o"
+                    location_json = urllib2.urlopen(location_json_string)
+                    loc_obj = json.load(location_json);
+                    location = loc_obj["results"][1]["formatted_address"]
+                    temp_location = location
             else:
-                location_json_string = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lati + "," + longi + "&key=AIzaSyAVPz6x8WGP1jhFxAqoeU-tE43ZPZl6n4o"
-                location_json = urllib2.urlopen(location_json_string)
-                loc_obj = json.load(location_json);
-                location = loc_obj["results"][1]["formatted_address"]
+                location = temp_location
 
         if error_there:
             return render_template('search.html', error=error)
@@ -256,13 +266,6 @@ def adddelfavorite():
             session.delete(del_item)
             session.commit()
     return "submitted"
-
-
-@app.route('/userhome')
-@login_required
-def userHome():
-    if 'username' in login_session:
-        return render_template('userhome.html', username=login_session['username'], uid=login_session['user_id'])
 
 
 

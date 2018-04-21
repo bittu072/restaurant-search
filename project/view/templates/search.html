@@ -1,20 +1,41 @@
 {% extends "base.html" %} {% block content %}
 
-<h1>Yelp it!!!!</h1>
+<main role="main">
 
-<form method='POST' action="#">
-    <label for="name">Search:</label>
-    <input type="text" maxlength="50" name="searchitem" placeholder="Search anything">
+    <section class="jumbotron text-center">
+        <div class="container">
+            {% if username %}
+            <h1> Welcome, {{username}} </h1>
+            <a href="/userhome/{{uid}}/recents"> <button class="btn btn-primary">Recent Search</button></a>
+            <a href="/userhome/{{uid}}/favorites"> <button class="btn btn-primary">Favorites</button></a> <br><br><br>{% endif %}
+            <h1 class="jumbotron-heading">Yelp it!!!!!</h1>
+            <p class="lead text-muted"> <i class="fa fa-yelp yelpcustom">Yelp the food or business!!!! <br>  We can allow you to favorite the restaurant and keep track of your recent searches.</p>
 
-    <label for="description">Location:</label>
-    <input type="text" maxlength="50" name="location" placeholder="Location">
-    <div id='submit_form' name='submit_form'> </div>{% if error %}
 
-    <div style="color:red">{{error}}</div>
-    {% endif %}
+                <form method="POST" action="/yelprestsearch">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col">
+                                <input type="text" class="form-control" maxlength="50" name="searchitem" placeholder="Search" required>
+                            </div>
+                            <div class="col">
+                                <input type="text" class="form-control" maxlength="50" name="location" placeholder="Location">
+                            </div>
+                        </div>
+                    </div>
 
-    <button type="submit" id="submit" value="Search"></span>Search</button>
-</form>
+                    {% if error %}
+                    <div style="color:red">{{error}}</div>
+                    {% endif %}
+
+                    <p>
+                        <button type="submit" id="submit_form" class="btn btn-primary" type="submit"> Search </button>
+                    </p>
+                </form>
+
+
+            </div>
+        </section>
 
 <script>
     $(document).ready(function() {
