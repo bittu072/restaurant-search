@@ -26,6 +26,7 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 
 
+# to handle the 404
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -132,7 +133,6 @@ def gconnect():
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: \
         150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    # flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
 
@@ -176,17 +176,7 @@ def gdisconnect():
         return response
 
 
-@app.route('/demo')
-def showdemo():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in xrange(32))
-    login_session['state'] = state
-    # return "The current session state is %s" % login_session['state']
-    return render_template('demo.html', STATE=state)
-
-temp_location = None
-
-
+# userhome page or the page where user can search
 @app.route('/userhome', methods=['GET', 'POST'])
 @app.route('/yelprestsearch', methods=['GET', 'POST'])
 def yelpRestaurantSearch():
@@ -255,6 +245,7 @@ def yelpRestaurantSearch():
                         location=location, searchItem=searchItem, username=login_session['username'])
 
 
+# route/method responsible to add or delete the favorites
 @app.route('/adddelfavorite', methods=['POST'])
 @login_required
 def adddelfavorite():
