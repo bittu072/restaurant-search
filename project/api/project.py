@@ -176,6 +176,7 @@ def gdisconnect():
         return response
 
 
+temp_location = None
 # userhome page or the page where user can search
 @app.route('/userhome', methods=['GET', 'POST'])
 @app.route('/yelprestsearch', methods=['GET', 'POST'])
@@ -204,7 +205,6 @@ def yelpRestaurantSearch():
 
         if not location:
             if not temp_location:
-
                 if ("lat" and "longi") in request.form:
                     lati = request.form['lat']
                     longi = request.form['longi']
