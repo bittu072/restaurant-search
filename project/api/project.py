@@ -167,7 +167,7 @@ def gdisconnect():
         del login_session['picture']
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
-        return response
+        return redirect(url_for('showLogin'))
     else:
 
     	response = make_response(json.dumps('Failed to revoke token \
@@ -277,7 +277,7 @@ def userRecents(user_id):
     username = getUserInfo(user_id)
     # reverse the order of the following query
     recents = session.query(RecentSearch).filter_by(user_id=user_id).order_by(desc(RecentSearch.id)).limit(10).all()
-    return render_template('recents.html', recents=recents)
+    return render_template('recents.html', recents=recents, username=login_session['username'])
 
 
 @app.route('/userhome/<int:user_id>/favorites')
@@ -286,4 +286,4 @@ def userFavorites(user_id):
     username = getUserInfo(user_id)
     # reverse the order of the following query
     favo = session.query(Favorites).filter_by(user_id=user_id).order_by(desc(Favorites.id)).all()
-    return render_template('favorites.html', favorites=favo)
+    return render_template('favorites.html', favorites=favo, username=login_session['username'])
