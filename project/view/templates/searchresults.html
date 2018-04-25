@@ -32,7 +32,7 @@
         <div class="album py-5 bg-light">
             <div class="container">
                 <div class="row">
-                    {% if results %} {% set count = 0 -%} {% for res in results %}
+                    {% if results %} {% for res in results %}
                     <div class="col-md-3">
                         <div class="card mb-3 box-shadow">
                             <img class="card-img-top img-sub" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" src="{{res['image_url']}}" alt="Card image cap">
@@ -44,18 +44,18 @@
                                         {% if username %}
                                         <form>
                                             <!-- <input type="hidden" name="favorite_info" value="{{res}}"> -->
-                                            <input type="hidden" name="favorite_name" id="favorite_name{{count}}" value="{{res['name']}}">
-                                            <input type="hidden" name="favorite_url" id="favorite_url{{count}}" value="{{url}}">
-                                            <input type="hidden" name="favorite_rating" id="favorite_rating{{count}}" value="{{rating}}">
-                                            <input type="hidden" name="favorite_num" id="favorite_num{{count}}" value="{{res['phone']}}">
-                                            <input type="hidden" name="favorite_img" id="favorite_img{{count}}" value="{{res['image_url']}}">
-                                            <input type="hidden" name="favorite_yelp_id" id="favorite_yelp_id{{count}}" value="{{res['id']}}"> {% if res["fav_flag"] == 0 %}
+                                            <input type="hidden" name="favorite_name" id="favorite_name{{loop.index}}" value="{{res['name']}}">
+                                            <input type="hidden" name="favorite_url" id="favorite_url{{loop.index}}" value="{{url}}">
+                                            <input type="hidden" name="favorite_rating" id="favorite_rating{{loop.index}}" value="{{rating}}">
+                                            <input type="hidden" name="favorite_num" id="favorite_num{{loop.index}}" value="{{res['phone']}}">
+                                            <input type="hidden" name="favorite_img" id="favorite_img{{loop.index}}" value="{{res['image_url']}}">
+                                            <input type="hidden" name="favorite_yelp_id" id="favorite_yelp_id{{loop.index}}" value="{{res['id']}}"> {% if res["fav_flag"] == 0 %}
 
-                                            <input type="hidden" name="favorite_action" id="favorite_action{{count}}" value="add">
-                                            <button type="button" id="{{count}}" class="temp_click btn btn-sm btn-outline-secondary">Add to Favorite</button> {% else %}
+                                            <input type="hidden" name="favorite_action" id="favorite_action{{loop.index}}" value="add">
+                                            <button type="button" id="{{loop.index}}" class="temp_click btn btn-sm btn-outline-secondary">Add to Favorite</button> {% else %}
 
-                                            <input type="hidden" name="favorite_action" id="favorite_action{{count}}" value="del">
-                                            <button type="button" id="{{count}}" class="temp_click btn btn-sm btn-outline-secondary">Remove Favorite</button> {% endif %}
+                                            <input type="hidden" name="favorite_action" id="favorite_action{{loop.index}}" value="del">
+                                            <button type="button" id="{{loop.index}}" class="temp_click btn btn-sm btn-outline-secondary">Remove Favorite</button> {% endif %}
                                         </form>
                                         {% endif %}
                                         <!-- <button type="button" class="btn btn-sm btn-outline-secondary">Add to Favourite</button> -->
@@ -69,7 +69,6 @@
                             </div>
                         </div>
                     </div>
-                    {% set count = count + 1 -%}
                     {% endfor %} {% else %}
                     <h3> No data found!!! </h3> {% endif %}
                 </div>
@@ -83,14 +82,12 @@
             $(document).on('click', '.temp_click', function() {
                 var count_num = this.id;
                 var favorite_num = $("#favorite_num" + count_num).val();
-
                 var favorite_name = $("#favorite_name" + count_num).val();
                 var favorite_rating = $("#favorite_rating" + count_num).val();
                 var favorite_url = $("#favorite_url" + count_num).val();
                 var favorite_yelp_id = $("#favorite_yelp_id" + count_num).val();
                 var favorite_img = $("#favorite_img" + count_num).val();
                 var action = $("#favorite_action" + count_num).val();
-
                 $.ajax({
                     url: "/adddelfavorite",
                     type: "post",
@@ -105,7 +102,7 @@
                     },
                     success: function(response) {
                         if (action === "add") {
-                            alert('Added to fav.')
+                            alert(favorite_name + 'Added to fav.')
                             $("#favorite_action" + count_num).replaceWith('<input type="hidden" \
                              name="favorite_action" id="favorite_action' +
                                 count_num + '" value="del">')
@@ -113,7 +110,7 @@
                              id="' + count_num + '" class="temp_click btn btn-sm btn-outline-secondary"> \
                              Remove Favorite</button>');
                         } else {
-                            alert('Removed the favorite.')
+                            alert(favorite_name + 'Removed the favorite.')
                             $("#favorite_action" + count_num).replaceWith('<input type="hidden" \
                              name="favorite_action" id="favorite_action' +
                                 count_num + '" value="add">')
@@ -121,7 +118,6 @@
                              id="' + count_num + '" class="temp_click btn btn-sm btn-outline-secondary"> \
                              Add to Favorite</button>');
                         }
-
                         // $("#place_for_suggestions").html(response);
                     },
                     error: function(xhr) {
@@ -131,4 +127,5 @@
                 });
             });
         });
+
     </script> {% endblock %}
